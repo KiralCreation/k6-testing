@@ -26,14 +26,16 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Docker build
-        run: docker build -t k9s-testing .
       
-        # Build the Docker image
+        # Define lowercase repository owner
+      - name: Set lowercase repository owner
+        id: repo_owner
+        run: echo "repo_owner=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+      # Build the Docker image
       - name: Build Docker Image
-        run: docker build -t ghcr.io/${{ github.repository_owner }}/k6-testing:latest .
+        run: docker build -t ghcr.io/${{ env.repo_owner }}/k6-testing:latest .
 
       # Push the Docker image to GitHub Container Registry
       - name: Push Docker Image
-        run: docker push ghcr.io/${{ github.repository_owner }}/k6-testing:latest
-      
+        run: docker push ghcr.io/${{ env.repo_owner }}/k6-testing:latest
